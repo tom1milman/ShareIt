@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <br><br>
+    <button onclick="createTrip()">Create trip</button>
+
+    <br><br><br><br><br><br>
+    <button onclick="getTrips()">Get trips</button>
+
+    <div id="trips"></div>
+
+    <br><br><br><br><br><br>
+    <button onclick="getAllTrips()">Get all trips</button>
+
+    <div id="all_trips"></div>
+
+    <script>
+        function createTrip() {
+            fetch("/api/trip/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Success:", data);
+                getTrips()
+                getAllTrips();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to create.");
+            });
+        }
+
+        function getTrips() {
+            fetch('/api/trip/list') // Sample public API
+            .then(response => response.json())
+            .then(data => {
+                const outputDiv = document.getElementById('trips');
+                outputDiv.innerHTML = ''; // Clear previous output
+
+                if (Array.isArray(data) && data.length === 0) {
+                    outputDiv.innerHTML = 'No data';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tripDiv = document.createElement('div');
+                    tripDiv.classList.add('trip-item');
+                    tripDiv.style.display = 'flex';
+
+                    tripDiv.innerHTML = `<pre>${JSON.stringify(item, null, 2)}</pre>
+<div>some test</div>`;
+
+                    outputDiv.appendChild(tripDiv)
+
+                    outputDiv.innerHTML += '<hr>';
+                });
+            })
+            .catch(error => {
+                document.getElementById('output').innerText = 'Error: ' + error;
+            });
+        }
+
+        function getAllTrips() {
+            fetch('/api/trip/all') // Sample public API
+            .then(response => response.json())
+            .then(data => {
+                const outputDiv = document.getElementById('all_trips');
+                outputDiv.innerHTML = ''; // Clear previous output
+
+                if (Array.isArray(data) && data.length === 0) {
+                    outputDiv.innerHTML = 'No data';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tripDiv = document.createElement('div');
+                    tripDiv.classList.add('trip-item');
+                    tripDiv.style.display = 'flex';
+
+                    tripDiv.innerHTML = `<pre>${JSON.stringify(item, null, 2)}</pre>`;
+
+                    outputDiv.appendChild(tripDiv)
+
+                    outputDiv.innerHTML += '<hr>';
+                });
+            })
+            .catch(error => {
+                document.getElementById('output').innerText = 'Error: ' + error;
+            });
+        }
+    </script>
+
+</body>
+</html>
